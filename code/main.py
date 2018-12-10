@@ -1,6 +1,6 @@
 import pygame
 import json 
-import time
+import timeit
 from snake import Snake
 from drawer import SnakeDrawer
 if __name__ == '__main__':
@@ -12,7 +12,7 @@ if __name__ == '__main__':
     BLK = int(jsdt['block-size'])
     if WIDTH % BLK != 0 or HEIGHT % BLK != 0:
         raise Exception('Error block-size should divide window-width and window-height')
-    SPEED = int(jsdt['speed'])
+    SPEED = float(jsdt['speed'])
 
     pygame.init()
     logo = pygame.image.load('assets/logo.jpg')
@@ -26,16 +26,27 @@ if __name__ == '__main__':
     drawer = SnakeDrawer(snake, screen, jsdt)
     drawer.draw()
 
-    drawer.next()
-    snake.turnUp()
-    drawer.next()
-    drawer.next()
-
     running = True
+    beg_time = timeit.default_timer()
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_w:
+                    snake.turnUp()
+                if event.key == pygame.K_s:
+                    snake.turnDown()
+                if event.key == pygame.K_a:
+                    snake.turnLeft()
+                if event.key == pygame.K_d:
+                    snake.turnRight()
+                if event.key == pygame.K_q:
+                    running = False
+        now_time = timeit.default_timer()
+        if now_time - beg_time >= SPEED:
+            beg_time = now_time
+            drawer.next()
         
         # do my work
 

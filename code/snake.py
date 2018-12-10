@@ -20,13 +20,17 @@ class Snake():
     def direction(self):
         return self.direction
     def turnLeft(self):
-        self.direction = LEFT
+        if self.direction != RIGHT:
+            self.direction = LEFT
     def turnRight(self):
-        self.direction = RIGHT
+        if self.direction != LEFT:
+            self.direction = RIGHT
     def turnUp(self):
-        self.direction = UP
+        if self.direction != DOWN:
+            self.direction = UP
     def turnDown(self):
-        self.direction = DOWN
+        if self.direction != UP:
+            self.direction = DOWN
     def nextHead(self):
         '''
         返回下一步蛇头会处于的位置
