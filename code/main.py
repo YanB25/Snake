@@ -56,6 +56,9 @@ if __name__ == '__main__':
                     snake.turnRight()
                 if event.key == pygame.K_q:
                     running = False
+                if event.key == pygame.K_SPACE:
+                    dif = hash(snake)
+                    snake.dump('output_{}.log'.format(str(abs(dif))))
         now_time = timeit.default_timer()
         if now_time - beg_time >= SPEED:
             beg_time = now_time

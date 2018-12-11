@@ -89,8 +89,20 @@ if __name__ == '__main__':
     with open('config.json', 'r') as f:
         dt = json.load(f)
 
+    with open ('output_9223372036577129500.log', 'r') as flog:
+        data = flog.read()
+    data = data.strip().split('\n')
+
     snake = Snake()
+    snake.snakebody = []
+    for d in data:
+        x, y = d.split(' ')
+        x = int(x)
+        y = int(y)
+        snake.snakebody.append((x, y))
+
+
     fruit = Fruit(dt)
-    fruit.last_generate = (8, 5)
+    fruit.last_generate = (3, 8)
     solver = PathSolve(snake, fruit, dt)
     print(solver.shortest_path())

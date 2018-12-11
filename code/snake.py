@@ -76,3 +76,9 @@ class Snake():
             if item == position:
                 return True
         return False
+    def dump(self, filename):
+        wrs = ''
+        for x, y in self.snakebody:
+            wrs += '{} {}\n'.format(str(x), str(y))
+        with open(filename, 'w') as f:
+            f.write(wrs)
