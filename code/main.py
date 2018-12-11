@@ -1,8 +1,11 @@
 import pygame
 import json 
 import timeit
+import time
 from snake import Snake
 from drawer import SnakeDrawer
+from drawer import FruitDrawer
+from fruit import Fruit
 if __name__ == '__main__':
     jsdt = None
     with open('config.json', 'r') as f:
@@ -10,6 +13,8 @@ if __name__ == '__main__':
     WIDTH = int(jsdt['window-width'])
     HEIGHT = int(jsdt['window-height'])
     BLK = int(jsdt['block-size'])
+    WID_BLK = WIDTH / BLK
+    HEI_BLK = HEIGHT / BLK
     if WIDTH % BLK != 0 or HEIGHT % BLK != 0:
         raise Exception('Error block-size should divide window-width and window-height')
     SPEED = float(jsdt['speed'])
@@ -23,12 +28,20 @@ if __name__ == '__main__':
     pygame.display.flip()
 
     snake = Snake()
-    drawer = SnakeDrawer(snake, screen, jsdt)
-    drawer.draw()
+    snakedrawer = SnakeDrawer(screen, jsdt, snake)
+    fruit = Fruit(jsdt)
+    fruitdrawer = FruitDrawer(screen, jsdt, fruit)
+    
+    while snake.at(fruit.where()):
+        fruit.generate()
+
+    snakedrawer.draw()
+    fruitdrawer.draw()
 
     running = True
     beg_time = timeit.default_timer()
     while running:
+        # time.sleep(SPEED / 100)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
@@ -46,8 +59,22 @@ if __name__ == '__main__':
         now_time = timeit.default_timer()
         if now_time - beg_time >= SPEED:
             beg_time = now_time
-            drawer.next()
-        
+
+            # check eat fruit
+            if snake.nextHead() == fruit.where():
+                snake.eatFruit()
+                while snake.at(fruit.where()) or snake.nextHead() == fruit.where():
+                    fruit.generate() # TODO:
+
+            snakedrawer.next()
+            fruitdrawer.draw()
+            if not snake.valid():
+                running = False
+            x, y = snake.head()
+            if x < 0 or x >= WID_BLK or y < 0 or y >= HEI_BLK:
+                running = False
+            pygame.display.flip()
+
         # do my work
 
     

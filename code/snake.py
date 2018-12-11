@@ -63,3 +63,16 @@ class Snake():
         print(self.snakebody)
     def eatFruit(self):
         self.hasFruit = True
+    def valid(self):
+        for i in range(len(self.snakebody)):
+            for j in range(0, i):
+                if self.snakebody[i] == self.snakebody[j]:
+                    return False
+        return True
+    def at(self, position):
+        assert(type(position) == tuple)
+        assert(len(position) == 2)
+        for item in self.snakebody:
+            if item == position:
+                return True
+        return False
