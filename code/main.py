@@ -2,6 +2,7 @@ import pygame
 import json 
 import timeit
 import time
+from solver import PathSolve
 from snake import Snake
 from drawer import SnakeDrawer
 from drawer import FruitDrawer
@@ -18,6 +19,7 @@ if __name__ == '__main__':
     if WIDTH % BLK != 0 or HEIGHT % BLK != 0:
         raise Exception('Error block-size should divide window-width and window-height')
     SPEED = float(jsdt['speed'])
+    AUTO = bool(jsdt['auto'])
 
     pygame.init()
     logo = pygame.image.load('assets/logo.jpg')
@@ -31,6 +33,10 @@ if __name__ == '__main__':
     snakedrawer = SnakeDrawer(screen, jsdt, snake)
     fruit = Fruit(jsdt)
     fruitdrawer = FruitDrawer(screen, jsdt, fruit)
+
+    pathsolve = PathSolve(snake, fruit, jsdt)
+    debug_b, debug_longest_path = pathsolve.longest_path(snake.snakebody[-1])
+    idx = 0
     
     while snake.at(fruit.where()):
         fruit.generate()
@@ -46,16 +52,17 @@ if __name__ == '__main__':
             if event.type == pygame.QUIT:
                 running = False
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_w:
-                    snake.turnUp()
-                if event.key == pygame.K_s:
-                    snake.turnDown()
-                if event.key == pygame.K_a:
-                    snake.turnLeft()
-                if event.key == pygame.K_d:
-                    snake.turnRight()
-                if event.key == pygame.K_q:
-                    running = False
+                if not AUTO:
+                    if event.key == pygame.K_w:
+                        snake.turnUp()
+                    if event.key == pygame.K_s:
+                        snake.turnDown()
+                    if event.key == pygame.K_a:
+                        snake.turnLeft()
+                    if event.key == pygame.K_d:
+                        snake.turnRight()
+                    if event.key == pygame.K_q:
+                        running = False
                 if event.key == pygame.K_SPACE:
                     dif = hash(snake)
                     snake.dump('output_{}.log'.format(str(abs(dif))))
@@ -68,6 +75,11 @@ if __name__ == '__main__':
                 snake.eatFruit()
                 while snake.at(fruit.where()) or snake.nextHead() == fruit.where():
                     fruit.generate() # TODO:
+
+            if AUTO:
+                snake.turn(debug_longest_path[idx])
+                idx += 1
+                snake.eatFruit()
 
             snakedrawer.next()
             fruitdrawer.draw()

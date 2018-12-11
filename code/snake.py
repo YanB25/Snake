@@ -82,3 +82,14 @@ class Snake():
             wrs += '{} {}\n'.format(str(x), str(y))
         with open(filename, 'w') as f:
             f.write(wrs)
+    def turn(self, d):
+        if d == 'U':
+            self.turnUp()
+        elif d == 'D':
+            self.turnDown()
+        elif d == 'L':
+            self.turnLeft()
+        elif d == 'R':
+            self.turnRight()
+        else:
+            assert(False)
