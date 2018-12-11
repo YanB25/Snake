@@ -61,6 +61,8 @@ if __name__ == '__main__':
                 if event.key == pygame.K_SPACE:
                     dif = hash(snake)
                     snake.dump('output_{}.log'.format(str(abs(dif))))
+                if event.key == pygame.K_RETURN:
+                    AUTO = not AUTO
                 if event.key == pygame.K_u:
                     SPEED *= 0.5 if AUTO else 0.8
                 if event.key == pygame.K_i:
