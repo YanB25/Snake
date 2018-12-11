@@ -2,7 +2,7 @@ import pygame
 import json 
 import timeit
 import time
-from pather import PathSolve
+from solver import GreedySolver
 from snake import Snake
 from drawer import SnakeDrawer
 from drawer import FruitDrawer
@@ -33,9 +33,6 @@ if __name__ == '__main__':
     snakedrawer = SnakeDrawer(screen, jsdt, snake)
     fruit = Fruit(jsdt)
     fruitdrawer = FruitDrawer(screen, jsdt, fruit)
-
-    pathsolve = PathSolve(snake, fruit, jsdt)
-    idx = 0
     
     while snake.at(fruit.where()):
         fruit.generate()
@@ -51,23 +48,31 @@ if __name__ == '__main__':
             if event.type == pygame.QUIT:
                 running = False
             if event.type == pygame.KEYDOWN:
-                if not AUTO:
-                    if event.key == pygame.K_w:
-                        snake.turnUp()
-                    if event.key == pygame.K_s:
-                        snake.turnDown()
-                    if event.key == pygame.K_a:
-                        snake.turnLeft()
-                    if event.key == pygame.K_d:
-                        snake.turnRight()
-                    if event.key == pygame.K_q:
-                        running = False
+                if event.key == pygame.K_w:
+                    snake.turnUp()
+                if event.key == pygame.K_s:
+                    snake.turnDown()
+                if event.key == pygame.K_a:
+                    snake.turnLeft()
+                if event.key == pygame.K_d:
+                    snake.turnRight()
+                if event.key == pygame.K_q:
+                    running = False
                 if event.key == pygame.K_SPACE:
                     dif = hash(snake)
                     snake.dump('output_{}.log'.format(str(abs(dif))))
+                if event.key == pygame.K_u:
+                    SPEED *= 0.5 if AUTO else 0.8
+                if event.key == pygame.K_i:
+                    SPEED /= 0.5 if AUTO else 0.8
         now_time = timeit.default_timer()
         if now_time - beg_time >= SPEED:
             beg_time = now_time
+
+            if AUTO:
+                solver = GreedySolver(snake, fruit, jsdt)
+                d = solver.nextDirection()
+                snake.turn(d)
 
             # check eat fruit
             if snake.nextHead() == fruit.where():
@@ -75,9 +80,6 @@ if __name__ == '__main__':
                 while snake.at(fruit.where()) or snake.nextHead() == fruit.where():
                     fruit.generate() # TODO:
 
-            if AUTO:
-                # TODO:
-                pass
 
             snakedrawer.next()
             fruitdrawer.draw()

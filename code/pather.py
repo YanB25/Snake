@@ -5,8 +5,8 @@ import queue
 import copy
 class PathSolve():
     def __init__(self, snake, fruit, config):
-        self.snake = copy.copy(snake)
-        self.fruit = copy.copy(fruit)
+        self.snake = copy.deepcopy(snake)
+        self.fruit = copy.deepcopy(fruit)
         self.config = config
         width = int(config['window-width'])
         height = int(config['window-height'])
@@ -31,8 +31,8 @@ class PathSolve():
             it has a shortest path. Second element tells you the path from 
             SNAKE HEAD to target. Empty list if no path.
         '''
-        print('target', target)
-        print('snake', self.snake.head())
+        # print('target', target)
+        # print('snake', self.snake.head())
         game_map = [
             ['O' for i in range(self.width)]
             for j in range(self.height)
@@ -41,7 +41,7 @@ class PathSolve():
 
         for x, y in self.snake.snakebody[1:]:
             game_map[y][x] = 'X' # block
-        PathSolve.printList(game_map)
+        # PathSolve.printList(game_map)
         x, y = target
         game_map[y][x] = 'F'
 
@@ -92,10 +92,10 @@ class PathSolve():
                 assert(direction in ['L', 'R'])
                 test_extend = ['U', 'D']
             
-            next_cur = self.__move(cur[0], cur[1], direction)
+            next_cur = self.pos_move(cur[0], cur[1], direction)
             for d in test_extend:
-                t1 = self.__move(cur[0], cur[1], d)
-                t2 = self.__move(next_cur[0], next_cur[1], d)
+                t1 = self.pos_move(cur[0], cur[1], d)
+                t2 = self.pos_move(next_cur[0], next_cur[1], d)
                 if self.__exstendable(*t1, game_map) and self.__exstendable(*t2, game_map):
                     extended = True
                     sp.insert(idx, d)
@@ -120,14 +120,14 @@ class PathSolve():
         '''
         inner function called by shortest path
         '''
-        PathSolve.printList(dir_map)
+        # PathSolve.printList(dir_map)
 
         x, y = target
         ret = []
         while dir_map[y][x] != 'O':
             ret.append(self.rev_map[dir_map[y][x]])
             i = self.dir.index(dir_map[y][x])
-            print('step', dir_map[y][x], i)
+            # print('step', dir_map[y][x], i)
             nx = self.delX[i]
             ny = self.delY[i]
             x, y = x + nx, y + ny
@@ -142,7 +142,7 @@ class PathSolve():
         return x >= 0 and x < self.width and y >= 0 and y < self.height
     def __exstendable(self, x, y, game_map):
         return self.isValid(x, y) and game_map[y][x] == 'O'
-    def __move(self, x, y, d):
+    def pos_move(self, x, y, d):
         i = self.dir.index(d)
         delX = self.delX[i]
         delY = self.delY[i]

@@ -3,6 +3,7 @@ from snake import Snake
 from fruit import Fruit
 from pather import PathSolve
 import copy
+import random
 class GreedySolver:
     def __init__(self, snake, fruit, config):
         self.snake = copy.deepcopy(snake)
@@ -51,12 +52,19 @@ class GreedySolver:
 
         # worst case, case 5
         print('fall back to worst case')
-        hx, hy = self.snake.head()
-        fx, fy = self.fruit.where()
-        if hx > fx:
-            return 'R'
-        else:
-            return 'L'
+        for i in range(10):
+            x = random.randint(0, self.width - 1)
+            y = random.randint(0, self.height - 1)
+            while (x, y) in self.snake.snakebody:
+                x = random.randint(0, self.width - 1)
+                y = random.randint(0, self.height - 1)
+            hp_w, lp_w = self.pathsolver.longest_path((x, y))
+            if hp_w:
+                print('bad case: random chase, {}-th time'.format(i))
+                return lp_w[0]
+        print('fall back to hell case.')
+        return 'U'
+            
 
 if __name__ == '__main__':
     dt = None
