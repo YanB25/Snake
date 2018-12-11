@@ -2,7 +2,7 @@ import pygame
 import json 
 import timeit
 import time
-from solver import PathSolve
+from pather import PathSolve
 from snake import Snake
 from drawer import SnakeDrawer
 from drawer import FruitDrawer
@@ -35,7 +35,6 @@ if __name__ == '__main__':
     fruitdrawer = FruitDrawer(screen, jsdt, fruit)
 
     pathsolve = PathSolve(snake, fruit, jsdt)
-    debug_b, debug_longest_path = pathsolve.longest_path(snake.snakebody[-1])
     idx = 0
     
     while snake.at(fruit.where()):
@@ -77,9 +76,8 @@ if __name__ == '__main__':
                     fruit.generate() # TODO:
 
             if AUTO:
-                snake.turn(debug_longest_path[idx])
-                idx += 1
-                snake.eatFruit()
+                # TODO:
+                pass
 
             snakedrawer.next()
             fruitdrawer.draw()

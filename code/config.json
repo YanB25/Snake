@@ -3,5 +3,5 @@
     "window-height": 600,
     "block-size": 50,
     "speed": 0.3,
-    "auto": true
+    "auto": false
 }
