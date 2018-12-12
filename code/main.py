@@ -7,6 +7,7 @@ from snake import Snake
 from drawer import SnakeDrawer
 from drawer import FruitDrawer
 from fruit import Fruit
+from pather import PathSolve
 if __name__ == '__main__':
     jsdt = None
     with open('config.json', 'r') as f:
@@ -33,7 +34,7 @@ if __name__ == '__main__':
     snakedrawer = SnakeDrawer(screen, jsdt, snake)
     fruit = Fruit(jsdt)
     fruitdrawer = FruitDrawer(screen, jsdt, fruit)
-    
+
     while snake.at(fruit.where()):
         fruit.generate()
 
