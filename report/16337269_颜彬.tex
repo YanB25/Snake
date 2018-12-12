@@ -852,14 +852,100 @@ class FruitDrawer(Drawer):
     \caption{最长路近似算法取得最优解（图为从蛇头到蛇尾的最长路）} \label{fig:lp}
 \end{figure}
 
+\subsection{算法实现}
+最长路近似算法的算法实现如\autoref{lst:longest}所示。代码仅展示重要部分。\\
 
+设变量sp存储的是最短路的走法中每一步的方向。算法一开始初始化idx为0，
+cur为最短路的第idx步的坐标。该算法反复尝试拓展第idx步，以求将第idx步
+拓展为$i_0, i_1, i_2$三步。其中$i_1$步就是第idx步，$i_0$和$i_2$是
+额外拓展的两步，这两步走的是相反的方向（例如上和下，左和右）。如此一来，
+$[i_0, i_1, i_2]$三步的效果完全和$[idx]$步的效果一致。\\
 
+举个例子，例如最短路中第idx步是向上走的。拓展算法会尝试把[UP]拓展为
+[LEFT, UP, RIGHT]（分别对应$i_0, i_1, i_2$）。可以看到，$i_1$等于
+第idx步的走向。$i_0$和$i_1$是两个相反的方向，且与第idx步\emph{垂直}。\\
+
+以上的描述解释了\autoref{lst:longest}注释(1)处代码的作用。它使用
+insert方法，分别做insert(idx, *) 和insert(idx + 2, *)，以完成以上描述
+中的拓展。\\
+
+\emph{NOTE:在拓展之后，最短路的第idx步的方向发生了变化。但第idx步时所在
+的坐标不变}\\
+
+\emph{NOTE:算法会在最短路的0$\sim$idx段完全拓展完毕后，再自增idx，尝试拓展
+idx+1段}。
+\begin{figure}[!hbt]
+\begin{itemize}
+\item[] \begin{lstlisting}[style=mypython, label=lst:longest, caption=最长路算法的实现]
+def longest_path(self, target):
+    '''
+    @variable sp 最长路列表
+    '''
+    # idx如正文描述
+    idx = 0
+    # 最短路的第idx步时的蛇头位置
+    cur = self.snake.head()
+    while True:
+        extended = False
+        direction = sp[idx] # 最短路的第idx步的走向
+        if direction in ['U', 'D']:
+            test_extend = ['L', 'R'] # 可能的拓展方向
+        else:
+            assert(direction in ['L', 'R'])
+            test_extend = ['U', 'D']
+        # next_cur 是 cur 沿着最短路走一步得到的结点 
+        next_cur = self.pos_move(cur[0], cur[1], direction)
+        for d in test_extend: # d是可能的拓展方向
+            # t1 和 t2分别是cur和next_cur朝着方向d移动一步得到的结点
+            t1 = self.pos_move(cur[0], cur[1], d)
+            t2 = self.pos_move(next_cur[0], next_cur[1], d)
+            # 如果t1和t2结点是能拓展的（该块在地图区域内且该块没有被占用）
+            if self.__exstendable(*t1, game_map) 
+                and self.__exstendable(*t2, game_map):
+                extended = True
+                # (1)
+                sp.insert(idx, d)
+                sp.insert(idx + 2, self.rev_map[d])
+                # 将t1和t2的所在块设置为占用
+                x, y = t1
+                game_map[y][x] = 'X'
+                x, y = t2
+                game_map[y][x] = 'X'
+                break
+        # 最短路从0到idx这一段已经完全无法拓展了。将idx加1
+        if not extended:
+            cur = next_cur
+            idx += 1
+            if idx >= len(sp):
+                break
+    return True, sp
+\end{lstlisting}
+\end{itemize}
+\end{figure}
+
+\subsection{最短路算法}
+本项目采用广度优先搜索算法寻找最短路。事实上，可以将该算法替换成
+A Star算法，获得更多性能的提升。
 
 \section{效果评价}\label{sec:eval}
-\section{实验总结}
-\begin{appendices}
-\section{参考文献} \label{sec:reference}
-\section{伪代码补充} \label{sec:file}
+贪吃蛇寻路算法的最终结果如\autoref{fig:finish}所示。\\
 
-\end{appendices}
+其中红色方块是蛇头（右上角）。绿色方块是水果（下方）。黑色方块是
+蛇身。白色方块是蛇身未占领的区域。\\
+
+从\autoref{fig:finish}可以看到，贪吃蛇几乎占满了全部的地图区域。
+说明该算法能取得比较好的效果。
+\begin{figure}[!hbt]
+    \begin{center}
+    \includegraphics[scale=0.4]{assets/finish.png}
+    \caption{贪吃蛇算法的最终场景\label{fig:finish}} 
+    \end{center} 
+\end{figure} 
+
+\section{实验总结}
+% \begin{appendices}
+% \section{参考文献} \label{sec:reference}
+% \section{伪代码补充} \label{sec:file}
+
+% \end{appendices}
 \end{document}
