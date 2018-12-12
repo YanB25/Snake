@@ -22,6 +22,7 @@ class GreedySolver:
             print('has path to eat fruit')
             # step 2: move virtual snake to the fruit
             virtual_snake = copy.deepcopy(self.snake)
+            virtual_snake.eatFruit()
             for d in shortestPath:
                 virtual_snake.turn(d)
                 virtual_snake.next()

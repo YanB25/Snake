@@ -78,6 +78,7 @@ if __name__ == '__main__':
 
             # check eat fruit
             if snake.nextHead() == fruit.where():
+                fruitdrawer.remove()
                 snake.eatFruit()
                 while snake.at(fruit.where()) or snake.nextHead() == fruit.where():
                     fruit.generate() # TODO:
